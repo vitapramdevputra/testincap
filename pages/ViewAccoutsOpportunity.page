@@ -1,0 +1,102 @@
+<apex:page showHeader="false" title="Account's Opportunity" standardController="Account" extensions="ViewAccountsOpportunityController" >
+    <html>
+        <style>
+            .header{
+            padding:1%;
+            display: inline-block;
+            width:100%;
+            }
+            .header-img{
+            padding:10px;
+            align-items:left;
+            width:50%;
+            display: inline-block;
+            line-height:1;
+            heigh:inherit;
+            }
+            .header-text{
+            font-size: 25px;
+            text-align:right;
+            display: inline-block;
+            width:40%;
+            line-height:1;
+            heigh:inherit;
+            }
+        </style>
+    </html>
+    <body>
+        <!-- Main Form -->
+        <apex:form id="frmAccOpp">
+            <div class="header">
+                <!-- Header Image and welcome text -->
+                <div class="header-img"><img src="/img/seasonLogos/Winter_18_yeti_175x65.png"/> </div> 
+                <div class="header-text">Welcome to custom VF page...</div>
+            </div>
+            
+            <apex:outputPanel id="opAccountOpporunity">
+            <!-- Page block for account details -->
+                <apex:pageBlock id="pgblockAccountDetail"> 
+                    <apex:pageBlockSection title="Account Details" showHeader="True" collapsible="false" columns="2" >
+                        <apex:pageBlockSectionItem id="pbsAccountOwner" >
+                            <apex:outputLabel >Account Owner</apex:outputLabel>
+                            <apex:outputLabel value="{!account.owner.Name}"></apex:outputLabel>
+                        </apex:pageBlockSectionItem>
+                        <!-- Used page block section for billing address and AnnualRevenue below... -->
+                        <apex:pageBlockSectionItem id="pbsAccountBillingAddress" >
+                            <apex:outputLabel >Billing Address</apex:outputLabel>
+                            <apex:outputPanel >
+                                <apex:outputText value="{!account.BillingStreet}"></apex:outputText><br/>
+                                <apex:outputText value="{!account.BillingCity}"></apex:outputText><br/>
+                                <apex:outputText value="{!account.BillingState}"></apex:outputText><br/>                        
+                                <apex:outputText value="{!account.BillingCountry}"></apex:outputText>                            
+                            </apex:outputPanel>
+                            
+                        </apex:pageBlockSectionItem>     
+                        
+                        <apex:outputText value="{!account.Name}"></apex:outputText>
+                        <apex:outputText value="{!account.Phone}"></apex:outputText>                        
+                        <apex:outputText value="{!account.AccountNumber}"></apex:outputText>
+                        <apex:pageBlockSectionItem id="pbsAccountAnnualRevenue" >
+                            <apex:outputLabel >Account Revenue</apex:outputLabel>
+                            <apex:outputText value="{0, number, 000,000.00}">
+                                <apex:param value="{!Account.AnnualRevenue}" />
+                            </apex:outputText>
+                        </apex:pageBlockSectionItem>
+                        
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+                <apex:pageBlock id="pgblockOppotunityList">
+                    <apex:messages />
+                    <apex:actionStatus id="actionStatusLoading" >
+                        <apex:facet name="start" >
+                            <img src="/img/loading.gif" />                    
+                        </apex:facet>
+                    </apex:actionStatus>
+                    <!-- page block table for opportunty list. -->
+                    <apex:pageBlockTable value="{!AccOpps}" var="opp" id="pgtOpps">
+                        <apex:column value="{!opp.Name}"/>
+                        <apex:column value="{!opp.Amount}"/>
+                        <apex:column headerValue="Stage" value="{!opp.StageName}"/>
+                        <apex:column value="{!opp.Type}"/>
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:outputPanel >View</apex:outputPanel>
+                            </apex:facet>
+                            <a href="#" onclick="window.open('/{!opp.Id}')">View</a>
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:outputPanel >Delete</apex:outputPanel>
+                            </apex:facet>
+                            <!-- **later** added on click's confirm -->
+                            <apex:commandLink value="Delete" status="actionStatusLoading" onclick="if(!confirm('Do you want to delete this opportunity?')) {return false};" action="{!DeleteOpp}" reRender="frmAccOpp">
+                                <apex:param name="selectedOpportunityId" value="{!opp.Id}" assignTo="{!OpportunityID}"/>
+                            </apex:commandLink>
+                        </apex:column>
+                    </apex:pageBlockTable>
+                </apex:pageBlock>
+            </apex:outputPanel>
+        </apex:form>
+    </body>
+    
+</apex:page>
